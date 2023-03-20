@@ -1,0 +1,5 @@
+# IDE files
+.idea/
+
+# Output files
+webapp/target/
