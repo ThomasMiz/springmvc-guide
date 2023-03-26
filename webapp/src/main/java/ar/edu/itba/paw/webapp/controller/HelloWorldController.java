@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -12,14 +14,25 @@ import org.springframework.web.servlet.ViewResolver;
 @Controller
 public class HelloWorldController {
 
-    // This field and the following constructor are an example on how to use the dependency injection engine.
-    // The HelloWorldController tells Spring that it wants a ViewResolver, from a method called "viewResolver".
-    // Spring gets that from the @Bean method in WebConfig.java and passes it to here.
-    private final ViewResolver viewResolver;
+    private final UserService us;
+
     @Autowired
-    public HelloWorldController(@Qualifier("viewResolver") final ViewResolver vr) {
-        this.viewResolver = vr;
+    public HelloWorldController(final UserService us) {
+        this.us = us;
     }
+
+    // Spring permite hacer inyección de otras formas, no solo pasando instancia al constructor.
+    // Estas otras incluyen:
+
+    // Inyectar directamente a un campo:
+    // @Autowired
+    // private UserService us;
+
+    // Inyectar a travez de un método setter:
+    // @Autowired
+    // public void setUserService(UserService us) { this.us = us; }
+
+
 
     // El RequestMapping se puede configurar para solo funcionar si el request tiene tal header, o es tal método HTTP,
     // o qué produce, etc.
@@ -32,7 +45,8 @@ public class HelloWorldController {
     @RequestMapping("/")
     public ModelAndView helloWorld() {
         final ModelAndView mav = new ModelAndView("helloworld/index");
-        mav.addObject("username", "PAW");
+        User user = us.createUser("paw@itba.edu.ar", "mysecret");
+        mav.addObject("username", user.getEmail());
 
         return mav;
     }
@@ -41,4 +55,5 @@ public class HelloWorldController {
     public ModelAndView register() {
         return new ModelAndView("helloworld/register");
     }
+
 }

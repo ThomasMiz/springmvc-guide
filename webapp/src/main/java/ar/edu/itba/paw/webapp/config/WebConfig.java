@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.JstlView;
 // Con el @ComponentScan(), yo le puedo decir a dónde tiene que ir a buscar componentes, como controllers y services.
 
 @EnableWebMvc
-@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services"})
+@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
 @Configuration
 public class WebConfig {
 
@@ -26,4 +26,7 @@ public class WebConfig {
         vr.setSuffix(".jsp");
         return vr;
     }
+
+    // La otra forma es no definiendo un @Bean, sino agregando el nombre de paquete en el @ComponentScan y dejando que
+    // spring detecte solo las clases que tengan @Controller, @Service, @Repository, etc.
 }
