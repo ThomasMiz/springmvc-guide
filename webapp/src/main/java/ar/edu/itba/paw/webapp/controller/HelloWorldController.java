@@ -46,7 +46,7 @@ public class HelloWorldController {
     public ModelAndView helloWorld() {
         final ModelAndView mav = new ModelAndView("helloworld/index");
         User user = us.createUser("paw@itba.edu.ar", "mysecret");
-        mav.addObject("username", user.getEmail());
+        mav.addObject("user", user);
 
         return mav;
     }
