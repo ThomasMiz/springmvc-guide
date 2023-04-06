@@ -5,6 +5,6 @@
   <link href="/css/main.css" rel="stylesheet"/>
 </head>
 <body>
-<h2>Hello <c:out value="${userId}" escapeXml="true"/>!</h2>
+<h2>Hello <c:out value="${user.email}" escapeXml="true"/>'s profile!</h2>
 </body>
 </html>

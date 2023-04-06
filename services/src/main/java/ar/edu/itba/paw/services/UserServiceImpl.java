@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(final String email, final String password) {
-        return userDao.createUser(email, password);
+        return userDao.create(email, password);
     }
 
     @Override
