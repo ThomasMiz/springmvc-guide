@@ -3,12 +3,16 @@ package ar.edu.itba.paw.webapp.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import javax.sql.DataSource;
+import java.sql.*;
 
 // Con el @ComponentScan(), yo le puedo decir a dónde tiene que ir a buscar componentes, como controllers y services.
 
@@ -32,6 +36,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     // La otra forma es no definiendo un @Bean, sino agregando el nombre de paquete en el @ComponentScan y dejando que
     // spring detecte solo las clases que tengan @Controller, @Service, @Repository, etc.
 
+
+    // Aca definimos un bean para la persistencia de datos. Este DataSource será inyectado en runtime a la capa de
+    // persistencia.
+    @Bean
+    public DataSource dataSource() {
+        final SimpleDriverDataSource ds = new SimpleDriverDataSource();
+        ds.setDriverClass(org.postgresql.Driver.class);
+        ds.setUrl("jdbc:postgresql://localhost/pawtest"); // We set the address and database to connect to
+        ds.setUsername("postgres"); // We set the username and password for the database
+        ds.setPassword("postgres");
+
+        return ds;
+    }
 
     // Con esto ubicamos los archivos en WEB-INF/css/* para mapearlos a /css/*, haciéndolos accesibles a clientes
     @Override
