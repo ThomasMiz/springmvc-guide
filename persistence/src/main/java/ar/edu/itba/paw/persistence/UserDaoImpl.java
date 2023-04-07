@@ -29,11 +29,6 @@ public class UserDaoImpl implements UserDao {
                 .usingGeneratedKeyColumns("id")
                 .withTableName("users");
                 // con .usingColumns(); podemos especificar las columnas a usar y otras cosas
-
-        this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users ("
-                + "id SERIAL PRIMARY KEY,"
-                + "email VARCHAR(100) NOT NULL UNIQUE,"
-                + "password VARCHAR(100) NOT NULL);");
     }
 
     @Override
