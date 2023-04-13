@@ -52,7 +52,7 @@ public class HelloWorldController {
 
     // @RequestMapping(value = "/register", method = RequestMethod.GET)
     @RequestMapping(value = "/register", method = { RequestMethod.GET }) // ( Podes especificar varios métodos http)
-    public ModelAndView registerForm(@ModelAttribute("form") final UserForm userForm) {
+    public ModelAndView registerForm(@ModelAttribute("registerForm") final UserForm userForm) {
         // En vez de hacer mav = new ModelAndView(...); y mav.addObject("form", userForm), puedo simplemente
         // agregar al parámetro userForm el @ModelAttribute() con el nombre de atributo a usar, y cuando retorne va a
         // automáticamente agregar al ModelAndView retornado ese objeto como atributo con nombre "form".
@@ -78,7 +78,7 @@ public class HelloWorldController {
     // usando una sintaxis que nos deja especificar los parámetros del http request como parámetros del método.
     // Acá igual lo hacemos de una forma más simple y potente, usamos un form:
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(@Valid @ModelAttribute("form") final UserForm userForm, final BindingResult errors) {
+    public ModelAndView register(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors) {
         if (errors.hasErrors()) {
             return registerForm(userForm);
         }

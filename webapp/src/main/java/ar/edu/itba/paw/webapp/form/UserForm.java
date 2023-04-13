@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 
 public class UserForm {
 
-    @Size(min = 6, max = 100) // Especifico rango del length del string
+    @Size(min = 6, max = 128) // Especifico rango del length del string
     // @Pattern(regexp = "^[a-zA-Z0-9]+$") // Debe validar con tal regex, lo dejo como ejemplo pero mejor usar email
     @Email
     private String email;

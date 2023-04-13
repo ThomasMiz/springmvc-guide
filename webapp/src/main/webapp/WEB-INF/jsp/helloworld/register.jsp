@@ -10,7 +10,7 @@
 <h2><spring:message code="register.title"/></h2>
 <h4><spring:message code="register.subtitle"/></h4>
 <c:url var="registerUrl" value="/register"/>
-<form:form modelAttribute="form" action="${registerUrl}" method="post">
+<form:form modelAttribute="registerForm" action="${registerUrl}" method="post">
     <div>
         <!-- Que los errores de email se representen con un tag <p> con la clase css "error" -->
         <form:errors path="email" cssClass="error" element="p"/>
