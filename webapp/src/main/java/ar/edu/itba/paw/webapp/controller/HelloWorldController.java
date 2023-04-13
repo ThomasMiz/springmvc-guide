@@ -74,6 +74,26 @@ public class HelloWorldController {
             @RequestParam(value = "password", required = true) final String password,
             @RequestParam(value = "repeat_password", required = true) final String repeatPassword
     ) {
+        // Acá podemos realizar validaciones de los datos. En caso de que haya un dato incorrecto, vamos a devolver
+        // el mismo form en el que ya estaba (obtenido llamando a la función registerForm()), pero agregando objetos
+        // al mav para avisar de los errores. Al mismo tiempo, pasamos los datos ingresados y en register.jsp los
+        // ponemos como el valor inicial de los inputs, de forma que no se pierden los datos escritos por el usuario.
+
+        // No siempre vamos a usar este mav, solo se usa en caso de errores pero lo alojamos igual
+        ModelAndView mav = registerForm();
+        boolean hasError = false;
+        mav.addObject("email", email);
+        mav.addObject("password", password);
+        mav.addObject("repeatPassword", repeatPassword);
+
+        if (!password.equals(repeatPassword)) {
+            mav.addObject("repeatPassword_error", true);
+            hasError = true;
+        }
+
+        if (hasError)
+            return mav;
+
         // Los @RequestParam pueden ser int, long, etc. Y nos hace la conversión por nosotros :)
         // Al @RequestParam también le podemos pasar "required = true", "default = 1234", etc.
         final User user = us.create(email, password);

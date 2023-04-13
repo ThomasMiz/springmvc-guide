@@ -35,4 +35,13 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+  <!--
+      Tenemos dos formas de mapear los archivos css. Una es la que está habilitada, que es agregando resource handlers
+      en WebConfig.addResourceHandlers(), y la otra es con un servlet mapping como se muestra en este comentario:
+  -->
+  <!--<servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>-->
+
 </web-app>
