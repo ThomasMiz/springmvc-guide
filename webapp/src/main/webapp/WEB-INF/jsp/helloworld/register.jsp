@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <html>
 <head>
@@ -6,28 +7,30 @@
 </head>
 <body>
 <h2>Register new user</h2>
-<form action="<c:url value="/register"/>" method="post">
+<c:url var="registerUrl" value="/register"/>
+<form:form modelAttribute="form" action="${registerUrl}" method="post">
     <div>
-        <c:if test="${email_error}">
-            <p class="error">Invalid email</p>
-        </c:if>
-        <label>Email: <input type="text" placeholder="Email" name="email" value="${form.email}"></label>
+        <!-- Que los errores de email se representen con un tag <p> con la clase css "error" -->
+        <form:errors path="email" cssClass="error" element="p"/>
+        <form:label path="email"> <!-- Estos se pueden reemplazar con un label normal en este caso -->
+            Email: <form:input path="email" placeholder="Email"/>
+        </form:label>
     </div>
     <div>
-        <c:if test="${password_error}">
-            <p class="error">Invalid password</p>
-        </c:if>
-        <label>Password: <input type="password" placeholder="Password" name="password" value="${form.password}"></label>
+        <form:errors path="password" cssClass="error" element="p"/>
+        <form:label path="password">
+            Password: <form:input path="password" type="password" placeholder="Password"/>
+        </form:label>
     </div>
     <div>
-        <c:if test="${repeatPassword_error}">
-            <p class="error">Passwords don't match</p>
-        </c:if>
-        <label>Repeat password: <input type="password" placeholder="Repeat password" name="repeatPassword" value="${form.repeatPassword}"></label>
+        <form:errors path="repeatPassword" cssClass="error" element="p"/>
+        <form:label path="repeatPassword">
+            Repeat password: <form:input path="repeatPassword" type="password" placeholder="Repeat password"/>
+        </form:label>
     </div>
     <div>
         <input type="submit" value="Register">
     </div>
-</form>
+</form:form>
 </body>
 </html>

@@ -56,6 +56,9 @@ public class HelloWorldController {
         // En vez de hacer mav = new ModelAndView(...); y mav.addObject("form", userForm), puedo simplemente
         // agregar al parámetro userForm el @ModelAttribute() con el nombre de atributo a usar, y cuando retorne va a
         // automáticamente agregar al ModelAndView retornado ese objeto como atributo con nombre "form".
+        // Si agrego también @Valid va a no solo popular el form, sino que validarlo. Esto no se usa acá en el GET,
+        // porque es posible que nos pasen el form con errores para decirle al usuario "che este campo está mal" (y en
+        // tal caso populamos el form con los mismos valores de antes), pero si se usa en el register POST.
         return new ModelAndView("helloworld/register");
     }
 
