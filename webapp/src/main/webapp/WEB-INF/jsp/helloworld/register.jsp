@@ -2,17 +2,19 @@
 
 <html>
 <body>
-<h2>Register or something</h2>
-<c:url var="registerUrl" value="/register"/>
-<form action="${registerUrl}" method="post">
+<h2>Register new user</h2>
+<form action="<c:url value="/register"/>" method="post">
     <div>
         <label>Email: <input type="text" name="email"></label>
     </div>
     <div>
-        <label>Password: <input type="password" name="password"></label>
+        <label>Password: <input type="password" placeholder="Password" name="password"></label>
     </div>
     <div>
-        <input type="submit" value="Let's go!">
+        <label>Repeat password: <input type="password" placeholder="Password" name="repeat_password"></label>
+    </div>
+    <div>
+        <input type="submit" value="Register">
     </div>
 </form>
 </body>

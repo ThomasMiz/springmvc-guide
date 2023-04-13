@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
@@ -39,7 +38,7 @@ public class UserServiceImplTest {
 
         // 2. Ejercitar
         // Pruebo la funcionalidad de usuarios
-        User newUser = us.createUser(EMAIL, PASSWORD);
+        User newUser = us.create(EMAIL, PASSWORD);
 
         // 3. Postcondiciones
         Assert.assertNotNull(newUser);
@@ -58,7 +57,7 @@ public class UserServiceImplTest {
         when(userDao.create(eq(EMAIL), eq(PASSWORD))).thenThrow(RuntimeException.class);
 
         // 2. Ejercitar
-        User newUser = us.createUser(EMAIL, PASSWORD);
+        User newUser = us.create(EMAIL, PASSWORD);
 
         // 3. Postcondiciones
         // (Nada, espero que lo anterior tire exception)
@@ -75,6 +74,6 @@ public class UserServiceImplTest {
 
         // 3. Postcondiciones
         Assert.assertTrue(newUser.isPresent());
-        Assert.assertEquals(ID, newUser.get().getId());
+        Assert.assertEquals(ID, newUser.get().getUserId());
     }
 }

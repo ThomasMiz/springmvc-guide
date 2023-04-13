@@ -11,6 +11,8 @@
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>
     <org.postgresql.version>42.2.5</org.postgresql.version>
+    <servlet-api.version>2.5</servlet-api.version>
+    <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
     <org.hsqldb.version>2.3.1</org.hsqldb.version>
@@ -46,13 +48,13 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <version>${servlet-api.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>1.2</version>
+        <version>${jstl.version}</version>
       </dependency>
 
       <dependency>

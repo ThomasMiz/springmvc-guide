@@ -50,7 +50,7 @@ public class UserDaoImplTest {
 
         // 3. Postcondiciones
         Assert.assertTrue(maybeUser.isPresent());
-        Assert.assertEquals(ID, maybeUser.get().getId());
+        Assert.assertEquals(ID, maybeUser.get().getUserId());
         Assert.assertEquals(EMAIL, maybeUser.get().getEmail());
         Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
     }

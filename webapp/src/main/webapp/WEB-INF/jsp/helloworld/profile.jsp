@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <link href="/css/main.css" rel="stylesheet"/>
+  <link href="<c:url value="/css/main.css"/>" rel="stylesheet"/>
 </head>
 <body>
 <h2>Hello <c:out value="${user.email}" escapeXml="true"/>'s profile!</h2>

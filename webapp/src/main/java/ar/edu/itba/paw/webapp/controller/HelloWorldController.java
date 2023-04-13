@@ -4,17 +4,12 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.ViewResolver;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 @Controller
@@ -76,16 +71,21 @@ public class HelloWorldController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(
             @RequestParam(value = "email", required = true) final String email,
-            @RequestParam(value = "password", required = true) final String password
+            @RequestParam(value = "password", required = true) final String password,
+            @RequestParam(value = "repeat_password", required = true) final String repeatPassword
     ) {
         // Los @RequestParam pueden ser int, long, etc. Y nos hace la conversión por nosotros :)
         // Al @RequestParam también le podemos pasar "required = true", "default = 1234", etc.
-        final User user = us.createUser(email, password);
+        final User user = us.create(email, password);
 
-        final ModelAndView mav = new ModelAndView("helloworld/index");
-        mav.addObject("user", user);
+        // Podemos retornar un view y mostrarlo, pero esto va a ser en el body retornado por el POST /register y por
+        // ende si apretas F5 el browser te tira un mensaje de "estas seguro que queres reenviar el formulario?"
+        // final ModelAndView mav = new ModelAndView("helloworld/index");
+        // mav.addObject("user", user);
+        // return mav;
 
-        return mav;
+        // Entonces una mejor idea es redirigir a la vista de ver useruario por id:
+        return new ModelAndView("redirect:/" + user.getUserId());
     }
 
     // @RequestMapping("/{id}") // El problema con este es que no pone restricciones al valor de "id"!
@@ -93,7 +93,8 @@ public class HelloWorldController {
     // NOTAR: Si pones negativo o texto antes te tiraba 400 bad request, ahora te tira 404 not found.
     public ModelAndView profile(@PathVariable("id") final long userId) {
         final ModelAndView mav = new ModelAndView("helloworld/profile");
-        mav.addObject("user", us.findById(userId).orElseThrow(UserNotFoundException::new));
+        final User user = us.findById(userId).orElseThrow(UserNotFoundException::new);
+        mav.addObject("user", user);
         return mav;
     }
 }

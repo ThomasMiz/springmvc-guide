@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <link href="/css/main.css" rel="stylesheet"/>
+    <link href="<c:url value="/css/main.css"/>" rel="stylesheet"/>
 </head>
 <body>
 <h1>Welcome!</h1>
