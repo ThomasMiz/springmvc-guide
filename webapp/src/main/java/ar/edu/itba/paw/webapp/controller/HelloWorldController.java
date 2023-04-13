@@ -5,12 +5,14 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Random;
 
 
 @Controller
@@ -34,7 +36,15 @@ public class HelloWorldController {
     // @Autowired
     // public void setUserService(UserService us) { this.us = us; }
 
-
+    // By default, unhandled exceptions will produce an HTTP 500 Internal Server Error. However, if the exception is,
+    // for example, that you tried to access a non-existing user's profile, it'd be better if we returned an HTTP 404
+    // Not Found, and show a custom page. This is how that's done:
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ModelAndView noSuchUser() {
+        return new ModelAndView("404");
+    }
+    // It is definitely a good idea to move these handlers to a separate controller, an ExceptionController.
 
     // El RequestMapping se puede configurar para solo funcionar si el request tiene tal header, o es tal método HTTP,
     // o qué produce, etc.
@@ -104,4 +114,13 @@ public class HelloWorldController {
         mav.addObject("user", user);
         return mav;
     }
+
+    // @ModelAttribute can also be given to a method. This makes it so for every ModelAndView in this controller, the
+    // given object will be added as param.
+    // @ModelAttribute // By default, the param will use the function's name, so addObject("randomNumber", number).
+    @ModelAttribute("randnum") // However we can also specify the param name manually like this.
+    public int randomNumber() {
+        return new Random().nextInt();
+    }
+    // A typical use for this is for an object with the currently logged user's information.
 }
