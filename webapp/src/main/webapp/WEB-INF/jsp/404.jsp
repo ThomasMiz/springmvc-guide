@@ -7,6 +7,5 @@
 <body>
 <h2>Oops!</h2>
 <p>We couldn't find that page for you 💀</p>
-<p>Here's a random number tho: ${randnum}</p>
 </body>
 </html>

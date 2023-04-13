@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
         this.jdbcInsert = new SimpleJdbcInsert(ds)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
-                // con .usingColumns(); podemos especificar las columnas a usar y otras cosas
+        // con .usingColumns(); podemos especificar las columnas a usar y otras cosas
     }
 
     @Override

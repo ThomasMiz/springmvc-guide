@@ -43,7 +43,7 @@ public class UserDaoImplTest {
     @Test
     public void testFindById() throws SQLException {
         // 1. Precondiciones
-        jdbcTemplate.execute("INSERT INTO users (id, email, password) VALUES (" + ID +", '" + EMAIL + "', '" + PASSWORD + "')");
+        jdbcTemplate.execute("INSERT INTO users (id, email, password) VALUES (" + ID + ", '" + EMAIL + "', '" + PASSWORD + "')");
 
         // 2. Ejercitar
         Optional<User> maybeUser = userDao.findById(ID);

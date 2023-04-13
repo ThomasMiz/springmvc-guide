@@ -9,5 +9,6 @@
 <h1><spring:message code="index.welcome"/></h1>
 <c:url var="registerUrl" value="/register"/>
 <p>Register <a href="<c:out value="${registerUrl}" escapeXml="true"/>">here</a>.</p>
+<p>Here's a random number: ${randnum}</p>
 </body>
 </html>

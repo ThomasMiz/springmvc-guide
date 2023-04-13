@@ -61,7 +61,7 @@ public class HelloWorldController {
     }
 
     // @RequestMapping(value = "/register", method = RequestMethod.GET)
-    @RequestMapping(value = "/register", method = { RequestMethod.GET }) // ( Podes especificar varios métodos http)
+    @RequestMapping(value = "/register", method = {RequestMethod.GET}) // ( Podes especificar varios métodos http)
     public ModelAndView registerForm(@ModelAttribute("registerForm") final UserForm userForm) {
         // En vez de hacer mav = new ModelAndView(...); y mav.addObject("form", userForm), puedo simplemente
         // agregar al parámetro userForm el @ModelAttribute() con el nombre de atributo a usar, y cuando retorne va a
