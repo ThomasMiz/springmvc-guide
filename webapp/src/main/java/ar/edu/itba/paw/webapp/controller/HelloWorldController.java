@@ -3,13 +3,14 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 
 @Controller
@@ -49,8 +50,12 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerForm() {
+    // @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = { RequestMethod.GET }) // ( Podes especificar varios métodos http)
+    public ModelAndView registerForm(@ModelAttribute("form") final UserForm userForm) {
+        // En vez de hacer mav = new ModelAndView(...); y mav.addObject("form", userForm), puedo simplemente
+        // agregar al parámetro userForm el @ModelAttribute() con el nombre de atributo a usar, y cuando retorne va a
+        // automáticamente agregar al ModelAndView retornado ese objeto como atributo con nombre "form".
         return new ModelAndView("helloworld/register");
     }
 
@@ -67,36 +72,15 @@ public class HelloWorldController {
     }*/
 
     // Pero en general pedimos parámetros fijos y respondemos algo claro, entonces podemos hacer las cosas más simples
-    // usando una sintaxis que nos deja especificar los parámetros del http request como parámetros del método:
+    // usando una sintaxis que nos deja especificar los parámetros del http request como parámetros del método.
+    // Acá igual lo hacemos de una forma más simple y potente, usamos un form:
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(
-            @RequestParam(value = "email", required = true) final String email,
-            @RequestParam(value = "password", required = true) final String password,
-            @RequestParam(value = "repeat_password", required = true) final String repeatPassword
-    ) {
-        // Acá podemos realizar validaciones de los datos. En caso de que haya un dato incorrecto, vamos a devolver
-        // el mismo form en el que ya estaba (obtenido llamando a la función registerForm()), pero agregando objetos
-        // al mav para avisar de los errores. Al mismo tiempo, pasamos los datos ingresados y en register.jsp los
-        // ponemos como el valor inicial de los inputs, de forma que no se pierden los datos escritos por el usuario.
-
-        // No siempre vamos a usar este mav, solo se usa en caso de errores pero lo alojamos igual
-        ModelAndView mav = registerForm();
-        boolean hasError = false;
-        mav.addObject("email", email);
-        mav.addObject("password", password);
-        mav.addObject("repeatPassword", repeatPassword);
-
-        if (!password.equals(repeatPassword)) {
-            mav.addObject("repeatPassword_error", true);
-            hasError = true;
+    public ModelAndView register(@Valid @ModelAttribute("form") final UserForm userForm, final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return registerForm(userForm);
         }
 
-        if (hasError)
-            return mav;
-
-        // Los @RequestParam pueden ser int, long, etc. Y nos hace la conversión por nosotros :)
-        // Al @RequestParam también le podemos pasar "required = true", "default = 1234", etc.
-        final User user = us.create(email, password);
+        final User user = us.create(userForm.getEmail(), userForm.getPassword());
 
         // Podemos retornar un view y mostrarlo, pero esto va a ser en el body retornado por el POST /register y por
         // ende si apretas F5 el browser te tira un mensaje de "estas seguro que queres reenviar el formulario?"

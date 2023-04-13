@@ -11,19 +11,19 @@
         <c:if test="${email_error}">
             <p class="error">Invalid email</p>
         </c:if>
-        <label>Email: <input type="text" placeholder="Email" name="email" value="${email}"></label>
+        <label>Email: <input type="text" placeholder="Email" name="email" value="${form.email}"></label>
     </div>
     <div>
         <c:if test="${password_error}">
             <p class="error">Invalid password</p>
         </c:if>
-        <label>Password: <input type="password" placeholder="Password" name="password" value="${password}"></label>
+        <label>Password: <input type="password" placeholder="Password" name="password" value="${form.password}"></label>
     </div>
     <div>
         <c:if test="${repeatPassword_error}">
             <p class="error">Passwords don't match</p>
         </c:if>
-        <label>Repeat password: <input type="password" placeholder="Repeat password" name="repeat_password" value="${repeatPassword}"></label>
+        <label>Repeat password: <input type="password" placeholder="Repeat password" name="repeatPassword" value="${form.repeatPassword}"></label>
     </div>
     <div>
         <input type="submit" value="Register">
