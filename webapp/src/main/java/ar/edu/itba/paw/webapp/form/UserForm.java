@@ -27,6 +27,9 @@ public class UserForm {
     @Email
     private String email;
 
+    // Si fueras a querer un mensaje propio en una anotación, podes usar el parámetro message que toman. Por ejemplo:
+    // @Email(message = "{badEmail}"). Esto es particularmente util si tenes varias del mismo tipo en un solo campo.
+
     @Size(min = 8)
     private String password;
 
