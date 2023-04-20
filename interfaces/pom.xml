@@ -16,6 +16,7 @@
   <url>http://www.example.com</url>
 
   <dependencies>
+    <!-- Internal dependencies -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>models</artifactId>

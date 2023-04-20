@@ -10,14 +10,16 @@
 
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>
-    <org.postgresql.version>42.2.5</org.postgresql.version>
+    <postgresql.version>42.2.5</postgresql.version>
     <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>
     <junit.version>4.13.2</junit.version>
-    <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
-    <org.hibernate-validator.version>4.3.1.Final</org.hibernate-validator.version>
+    <!-- NOTE: During class newer versions of the validator packages were used. THESE DO NOT WORK ON THE PAWSERVER -->
+    <validation-api.version>1.0.0.GA</validation-api.version>
+    <hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
+    <spring-security.version>4.0.4.RELEASE</spring-security.version>
     <mockito.version>2.25.1</mockito.version>
-    <org.hsqldb.version>2.3.1</org.hsqldb.version>
+    <hsqldb.version>2.3.1</hsqldb.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -25,6 +27,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Spring dependencies -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
@@ -36,6 +39,7 @@
         <version>${spring.version}</version>
       </dependency>
 
+      <!-- Servlet dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
@@ -48,21 +52,40 @@
         <version>${jstl.version}</version>
       </dependency>
 
+      <!-- Validation dependencies -->
       <dependency>
         <groupId>javax.validation</groupId>
         <artifactId>validation-api</artifactId>
-        <version>${javax.validation-api.version}</version>
+        <version>${validation-api.version}</version>
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
-        <version>${org.hibernate-validator.version}</version>
+        <version>${hibernate-validator.version}</version>
       </dependency>
 
+      <!-- Security dependencies -->
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+
+      <!-- Persistence dependencies -->
       <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>${org.postgresql.version}</version>
+        <version>${postgresql.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -70,6 +93,7 @@
         <version>${spring.version}</version>
       </dependency>
 
+      <!-- Testing dependencies -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
@@ -91,7 +115,7 @@
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>${org.hsqldb.version}</version>
+        <version>${hsqldb.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
