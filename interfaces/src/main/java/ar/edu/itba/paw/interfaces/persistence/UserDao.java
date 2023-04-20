@@ -8,4 +8,6 @@ public interface UserDao {
     User create(final String email, final String password);
 
     Optional<User> findById(long userId);
+
+    Optional<User> findByEmail(String email);
 }

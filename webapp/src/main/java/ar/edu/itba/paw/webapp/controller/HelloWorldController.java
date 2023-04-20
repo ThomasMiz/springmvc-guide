@@ -2,10 +2,12 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +48,16 @@ public class HelloWorldController {
     // Por default, cualquier pedido sin importar headers o método HTTP es aceptado por el mapping:
     @RequestMapping("/")
     public ModelAndView helloWorld() {
-        final ModelAndView mav = new ModelAndView("helloworld/index");
-        return mav;
+        // Esta es la forma en la que podemos conseguir el usuario actual de spring security:
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // Como cada request es ejecutado por un thread, esto no necesita parámetros, si no que utiliza el ID del
+        // thread actual para saber quién es el usuario.
+        // Esto se guarda en el SecurityContext, que podemos obtener con getContext(), que por detras esto utiliza un
+        // ThreadLocal<SecurityContext> para saber qué contexto tiene el thread actual.
+
+        final User user = us.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
+        return new ModelAndView("redirect:/" + user.getUserId());
+        //return new ModelAndView("helloworld/index");
     }
 
     // @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -103,6 +113,11 @@ public class HelloWorldController {
         final User user = us.findById(userId).orElseThrow(UserNotFoundException::new);
         mav.addObject("user", user);
         return mav;
+    }
+
+    @RequestMapping("/login")
+    public ModelAndView loginForm() {
+        return new ModelAndView("helloworld/login");
     }
 
     // @ModelAttribute can also be given to a method. This makes it so for every ModelAndView in this controller, the

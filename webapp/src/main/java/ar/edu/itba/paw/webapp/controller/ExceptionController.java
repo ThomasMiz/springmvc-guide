@@ -15,10 +15,11 @@ public class ExceptionController {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView noSuchUser() {
-        return new ModelAndView("404");
+        return new ModelAndView("/errors/404");
     }
     // Es una buena idea poner estos en controller distinto para ser organizados, por ejemplo un ExceptionController.
     // Para que funcione esto igual vamos a precisar agregarle @ControllerAdvice en vez de @Controller, o
     // alternativamente hacer una clase base BaseController, poner los handlers ahí, y que todos tus controllers
     // extiendan de BaseController. Vamos a ver mejor cómo trabajar con esto más adelante.
+    // Otra alternativa está en el web.xml, donde podemos agregar tags <error-page>.
 }
