@@ -36,16 +36,6 @@ public class HelloWorldController {
     // @Autowired
     // public void setUserService(UserService us) { this.us = us; }
 
-    // By default, unhandled exceptions will produce an HTTP 500 Internal Server Error. However, if the exception is,
-    // for example, that you tried to access a non-existing user's profile, it'd be better if we returned an HTTP 404
-    // Not Found, and show a custom page. This is how that's done:
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView noSuchUser() {
-        return new ModelAndView("404");
-    }
-    // It is definitely a good idea to move these handlers to a separate controller, an ExceptionController.
-
     // El RequestMapping se puede configurar para solo funcionar si el request tiene tal header, o es tal método HTTP,
     // o qué produce, etc.
     // @RequestMapping(value = "/", headers = "...", consumes = "...", method = "...", produces = "...")
