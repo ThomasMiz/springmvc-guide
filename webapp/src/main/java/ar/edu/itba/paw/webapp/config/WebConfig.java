@@ -20,7 +20,6 @@ import org.springframework.web.servlet.view.JstlView;
 
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
 import java.util.concurrent.TimeUnit;
 
 // Con el @ComponentScan(), yo le puedo decir a dónde tiene que ir a buscar componentes, como controllers y services.
