@@ -115,7 +115,7 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginForm() {
         return new ModelAndView("helloworld/login");
     }
