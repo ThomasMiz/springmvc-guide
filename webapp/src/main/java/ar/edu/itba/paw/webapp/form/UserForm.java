@@ -36,6 +36,9 @@ public class UserForm {
     @Size(min = 8)
     private String repeatPassword;
 
+    // NOTA: Si tu form incluye fechas, podes usar tipos de java.util o java.time, por ejemplo LocalDate, LocalTime,
+    // LocalDateTime, Year, YearMonth, etc. y validarlos con, por ejemplo @Past y @Future.
+
     public String getEmail() {
         return email;
     }

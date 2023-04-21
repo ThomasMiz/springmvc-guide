@@ -47,6 +47,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // .antMatchers("/posts/review").hasRole("EDITOR")
                 // El endpoint "user/ban" solo lo pueden acceder usuarios con el rol de USER_ADMIN:
                 // .antMatchers("/user/ban").hasRole("USER_ADMIN");
+                // Este tipo de filtros de "o si o no" no siempre es suficiente. A veces queremos que, por ejemplo,
+                // todos los EDITORs puedan entrar a /posts/review, pero también el usuario que creó el post. Para esto
+                // existe un Expression Language en spring security que te permite definir cosas más precisas:
+                // .antMatchers("/posts/review").access("@AccessHelper.canEdit") // No los vamos a ver en clase igual
                 // Todos los demas accesos a cualquier cosa en "/**" piden solo autentiación (ESTO SIEMPRE AL FINAL!)
                 .antMatchers("/**").authenticated()
 
