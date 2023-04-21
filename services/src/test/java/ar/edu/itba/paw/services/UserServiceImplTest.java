@@ -7,7 +7,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -27,6 +30,8 @@ public class UserServiceImplTest {
     // mock-eada:
     @Mock // Le pedimos que nos genere una clase mock de UserDao
     private UserDao userDao;
+    @Spy
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @InjectMocks // Le pedimos que cree un UserServiceImpl, y que en el ctor (que toma un UserDao) inyecte un mock.
     private UserServiceImpl us;
 
@@ -54,7 +59,7 @@ public class UserServiceImplTest {
     public void testCreateAlreadyExists() {
         // 1. Precondiciones
         // Defino el comportamiento de la clase mock de UserDao
-        when(userDao.create(eq(EMAIL), eq(PASSWORD))).thenThrow(RuntimeException.class);
+        when(userDao.create(eq(EMAIL), eq(passwordEncoder.encode(PASSWORD)))).thenThrow(RuntimeException.class);
 
         // 2. Ejercitar
         User newUser = us.create(EMAIL, PASSWORD);
