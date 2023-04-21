@@ -10,4 +10,6 @@ public interface UserDao {
     Optional<User> findById(long userId);
 
     Optional<User> findByEmail(String email);
+
+    void changePassword(String email, String password);
 }

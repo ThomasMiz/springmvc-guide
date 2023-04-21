@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,12 +23,29 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    // Hasta ahora la contraseña la guardamos en texto plano. Esto está recontra mal, y lo vamos a solucionar guardando
+    // la contraseña hasheada con bcrypt. Esto lo vamos a hacer con la interfaz PasswordEncoder.
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // Hay tres implementaciones default de PasswordEncoder. La primera es NoOpPasswordEncoder, que no hace nada,
+        // la segunda es StandardPasswordEncoder que permite utilizar algoritmos que trae spring-security por default.
+        // La tercera y la que vamos a usar es BCryptPasswordEncoder, la recomendada por Spring.
+        return new BCryptPasswordEncoder();
+        // Nota: Las contraseñas hasheadas con bcrypt siguen el patron "\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}".
+        // Si queremos usar regex, podemos usar la clase java.util.regex.Pattern.
+        // Si nuestra db ya tiene contraseñas en texto plana y queremos migrar a bcrypt, podemos usar esta regex para
+        // fijarnos cuando alguien hace login si la contraseña guardada no matchea ese patrón, y si no lo hace la
+        // hasheamos y guardamos antes de proceguir.
+    }
+
     // Tengo que configurar el UserDetailsService del auth para que sepa como usar nuestra base de datos. Le proveemos
     // al auth un UserDetailsService. ES IMPORTANTÍSIMO ESPECIFICARLO PORQUE SI NO AGARRA E INTENTA ACCEDER A LA DB DE
     // FORMA DIRECTA ASUMIENDO UNA TABLA CON CIERTO ESQUEMA.
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
+        // Especificamos que la autenticación se hace con el userDetailsService, y especificamos nuestro
+        // PasswordEncoder para que sepa que estamos hasheando las contraseñas con bcrypt.
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override

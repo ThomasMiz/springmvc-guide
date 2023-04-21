@@ -111,4 +111,9 @@ public class UserDaoImpl implements UserDao {
     public Optional<User> findByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email).stream().findFirst();
     }
+
+    @Override
+    public void changePassword(String email, String password) {
+        jdbcTemplate.update("UPDATE users SET password=? WHERE email=?", password, email);
+    }
 }
