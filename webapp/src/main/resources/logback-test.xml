@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Antes de buscar el archivo logback.xml, logback busca a ver si existe logback-test.xml. Este archivo se supone que
+    se use para testing, y si existe se carga este y se ignora logback.xml. Lo que podemos hacer para tener logging
+    como antes local, pero que siga estando logging en production, es poner este archivo PERO decirle a Maven que no
+    incluya ese archivo cuando empaqueta el war. Ver webapp/pom.xml en el <plugin> de maven-war-plugin cómo excluimos
+    este archivo del packaging.
+-->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
