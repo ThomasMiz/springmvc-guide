@@ -5,6 +5,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,11 +15,29 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.Random;
 
 
 @Controller
 public class HelloWorldController {
+
+    // Asegurate de usar org.slf4j.Logger! Ojo de que la clase pasada por parámetro sea la correcta OJO AL COPYPASTE
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class);
+    // Vos ahora podes loggear llamando LOGGER.<level>(mensaje). Por ejemplo:
+    // LOGGER.warn("El servicio de usuarios tardó mucho tiempo en crear un nuevo usuario!");
+    // Lo que está MAL hacer es esto:
+    // LOGGER.info("Se creó el usuario con email " + user.getEmail());
+    // Porque esto tiene que generar el string, y el logger talvez después bocha el mensaje por nivel! Solución:
+    // LOGGER.info("Se creó el usuario con email {}", user.getEmail());
+    // Y ahora el logger internamente concatena los strings. Se pueden especificar tantos {}s como quieras.
+    // El tema ahora es que user.getEmail() se llama siempre! Qué pasa si esto es una operación cara? Podemos usar una
+    // lambda y solo la va a evaluar si precisa construir el string. ESTO SOLO ESTÁ EN SLF4J 2.0, O SEA NO LO TENGO ACÁ
+    // LOGGER.info("Se creó el usuario con email {}", () -> user.getEmail());
+    // Para loggear errores, el último parámetro del método debe ser un tipo Throwable, y así se loggea solo con el
+    // stack trace y eso:
+    // LOGGER.error("A la merda se pudrió tudu 💀", new UserNotFoundException());
+
 
     private final UserService us;
 
@@ -54,9 +74,14 @@ public class HelloWorldController {
         // Esto se guarda en el SecurityContext, que podemos obtener con getContext(), que por detras esto utiliza un
         // ThreadLocal<SecurityContext> para saber qué contexto tiene el thread actual.
 
-        final User user = us.findByEmail(userDetails.getUsername()).orElseThrow(UserNotFoundException::new);
-        return new ModelAndView("redirect:/" + user.getUserId());
-        //return new ModelAndView("helloworld/index");
+        final Optional<User> user = us.findByEmail(userDetails.getUsername());
+        if (user.isPresent()) {
+            LOGGER.debug("Hello world page requested by user {}", user.get().getUserId());
+            return new ModelAndView("redirect:/" + user.get().getUserId());
+        }
+
+        LOGGER.warn("Unknown user requested the hello world page");
+        return new ModelAndView("helloworld/index");
     }
 
     // @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -68,6 +93,7 @@ public class HelloWorldController {
         // Si agrego también @Valid va a no solo popular el form, sino que validarlo. Esto no se usa acá en el GET,
         // porque es posible que nos pasen el form con errores para decirle al usuario "che este campo está mal" (y en
         // tal caso populamos el form con los mismos valores de antes), pero si se usa en el register POST.
+        LOGGER.info("Register form requested by someone");
         return new ModelAndView("helloworld/register");
     }
 
@@ -89,10 +115,12 @@ public class HelloWorldController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors) {
         if (errors.hasErrors()) {
+            LOGGER.warn("Register form POST failed with {} errors", errors.getAllErrors().size());
             return registerForm(userForm);
         }
 
         final User user = us.create(userForm.getEmail(), userForm.getPassword());
+        LOGGER.warn("Registered new user: {}, {}", user.getEmail(), user.getPassword());
 
         // Podemos retornar un view y mostrarlo, pero esto va a ser en el body retornado por el POST /register y por
         // ende si apretas F5 el browser te tira un mensaje de "estas seguro que queres reenviar el formulario?"
