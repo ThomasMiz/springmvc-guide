@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,5 +56,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(String email, String password) {
         userDao.changePassword(email, passwordEncoder.encode(password));
+    }
+
+    @Async
+    @Override
+    public void sendWelcomeEmail(String email) {
+        try {
+            // Simular alguna operación larga que corre en background.
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+
+        }
+    }
+
+    @Scheduled(initialDelay = 5000, fixedRate = 1000) // delays en milisegundos
+    @Override
+    public void someScheduledOperation() /*throws InterruptedException*/ {
+        // 5 segundos después de que inicie el servidor, este método se llama y se deja correr en background cada 1
+        // segundo.
+        // Por default, no se invoca el método si el anterior sigue corriendo. Si queremos cambiar este comporamiento,
+        // le podemos agregar un throws InterruptedException al método
     }
 }

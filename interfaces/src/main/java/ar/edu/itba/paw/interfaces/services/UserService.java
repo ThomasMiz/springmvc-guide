@@ -12,4 +12,8 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     void changePassword(String email, String password);
+
+    void sendWelcomeEmail(String email);
+
+    void someScheduledOperation();
 }
