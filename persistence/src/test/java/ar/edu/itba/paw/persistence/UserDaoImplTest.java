@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
@@ -28,7 +29,7 @@ public class UserDaoImplTest {
     private DataSource ds;
 
     @Autowired
-    private UserDaoImpl userDao;
+    private UserDao userDao;
 
     private JdbcTemplate jdbcTemplate;
 

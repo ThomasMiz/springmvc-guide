@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
+// Le sacamos esto porque ahora queremos usar el UserDaoJpa.
+// @Repository
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;

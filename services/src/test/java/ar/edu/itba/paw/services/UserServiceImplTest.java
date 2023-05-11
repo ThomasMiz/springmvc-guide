@@ -39,7 +39,7 @@ public class UserServiceImplTest {
     public void testCreate() {
         // 1. Precondiciones
         // Defino el comportamiento de la clase mock de UserDao
-        when(userDao.create(anyString(), anyString())).thenReturn(new User(0, EMAIL, PASSWORD));
+        when(userDao.create(anyString(), anyString())).thenReturn(new User(Long.valueOf(0), EMAIL, PASSWORD));
 
         // 2. Ejercitar
         // Pruebo la funcionalidad de usuarios

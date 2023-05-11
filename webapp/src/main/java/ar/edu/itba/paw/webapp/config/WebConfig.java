@@ -12,6 +12,10 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -23,8 +27,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 // Con el @ComponentScan(), yo le puedo decir a dónde tiene que ir a buscar componentes, como controllers y services.
@@ -71,8 +77,42 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(final DataSource ds) {
-        return new DataSourceTransactionManager(ds);
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+        // Este transaction manager no nos sirve más! Ahora que tenemos object-relational-mapping de Hibernate
+        // necesitamos un transaction manager que entienda JPA.
+        // return new DataSourceTransactionManager(ds);
+
+        return new JpaTransactionManager(emf);
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+
+        factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+        factoryBean.setDataSource(dataSource());
+
+        final HibernateJpaVendorAdapter jpaAdapter = new HibernateJpaVendorAdapter();
+        factoryBean.setJpaVendorAdapter(jpaAdapter);
+
+        final Properties properties = new Properties();
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
+        // Con la setting hibernate.hbm2ddl.auto le decimos a hibernate cómo asegurarse que las tablas de la base de
+        // datos sean iguales a los modelos que tiene. Si pongo "create", le digo que re-cree las tablas Y SE PIERDEN
+        // TODOS LOS DATOS. Si pongo "update", que hace lo mejor que pueda para ALTER-ar las tablas a los modelos.
+        // Si agregaste un CHECK (cosa > 0) probablemente lo ignore, pero si agregaste una columna nueva la agrega.
+        // Si no queres que haga nada, lo pones en "none".
+        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+        // NOTA: Si decidis usar esto, deberias sacar los @Bean de dataSourceInitializer y databasePopulator, ya que
+        // Hibernate se estará encargando de crear las tablas.
+
+        // Esto imprime a STDOUT las consultas SQL (SI LO PONES EN PRODUCCIÓN REPROBAS):
+        // properties.setProperty("hibernate.show_sql", "true");
+        // properties.setProperty("format_sql", "true");
+
+        factoryBean.setJpaProperties(properties);
+
+        return factoryBean;
     }
 
     // Con esto ubicamos los archivos en WEB-INF/css/* para mapearlos a /css/*, haciéndolos accesibles a clientes
