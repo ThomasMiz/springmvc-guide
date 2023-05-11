@@ -17,7 +17,7 @@
     <jstl.version>1.2</jstl.version>
 
     <!-- Validation dependencies -->
-    <!-- NOTE: During class newer versions of the validator packages were used. THESE DO NOT WORK ON THE PAWSERVER -->
+    <!-- NOTE: During class newer versions of the validator packages were used, THOSE DO NOT WORK ON THE PAWSERVER -->
     <validation-api.version>1.1.0.Final</validation-api.version>
     <hibernate-validator.version>5.1.3.Final</hibernate-validator.version>
 
