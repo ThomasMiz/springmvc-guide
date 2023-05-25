@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "users")
@@ -36,11 +37,20 @@ public class User {
     // elemento de la lista?" Lo borro de la tabla? O lo dejo vivo?
     // Otro parámetro importante es el mappedBy. Hibernate no tiene forma de saber que esto y lo que pusimos
     // en Issue son dos lados de la misma relación! Entonces lo especificamos con el mappedBy.
-    @OneToMany(mappedBy = "reportedBy", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reportedBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Issue> reportedIssues;
 
-    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Issue> assignedIssues;
+
+    // El FetchType es cuándo se trae los datos. Con EAGER trae las listas de issues cuando carga el usuario, pero con
+    // LAZY la trae cuando se hace el get. El problema es que este lazy solo va a funcionar si e get se hace dentro del
+    // @Transactional, entonces si vos en tu service traes un User sin los issues cargados, lo retornas, y en el
+    // controller intentas acceder a los reportedIssues, no va a poder traerlos!
+    // La solución que te hace reprobar es cargarlos forzadamente, en el service o en el dao:
+    // Optional<User> user = findById
+    // user.ifPresent(u -> u.getReportedIssues().size()); // Fuerzo que se tenga que cargar la colección
+    // return user;
 
     // Para crear una instancia, Hibernate en vez de usar un constructor con los datos nos obliga a poner un
     // constructor default, y luego usa reflection para settear los valores de los campos

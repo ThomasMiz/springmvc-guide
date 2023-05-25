@@ -37,6 +37,22 @@ public class IssueServiceImpl implements IssueService {
         final Issue issue = new Issue(title, description, user, null, priority);
         user.getReportedIssues().add(issue);
 
+        // Un tema con esto es que estamos violando nuestra división de capas; Estamos creando e insertando algo desde
+        // el service, sin pasar por persistence! Aparte hay un tema de performance; estamos haciendo un SELECT de un
+        // user para crear un issue, cuando en realidad podríamos hacer el insert de issue directamente.
+        // Para evitar ese select, podemos en findById() hacer un em.getReference(User.class, id), que retorna un User
+        // vacío, pero con la primary key. Otra alternativa es agregar métodos al service como initReportedIssues()
+        // que los carga, pero esto queda feo, tenes que ser declarativo en "qué cargo y qué no".
+
+        // Otra alternativa, es que mi contexto de persistencia sea más grande. Podemos agregar al web.xml un <filter>
+        // para que abra la sesión al iniciar un request, y la cierre al terminar. Otra alternativa sería usar usar un
+        // interceptor del dispatcher. Con la alternativa xml es más dificil excluir archivos estáticos, pero la vamos
+        // a usar igual. Ahora cuando webapp está renderizando la vista, intenta acceder a los issues de un user y se
+        // hace el query en el momento!
+
+        // DESVENTAJA: Perdimos mucho control sobre qué query se ejecuta en qué momento! No está mal visto usar esto,
+        // pero algunos prefieren cargar las cosas explicitamente antes de retornar al controller.
+
         return issue;
     }
 }

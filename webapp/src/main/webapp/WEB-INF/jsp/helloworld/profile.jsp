@@ -16,5 +16,14 @@
         </li>
     </c:forEach>
 </ul>
+
+<h3><spring:message code="profile.assignedissuelist"/></h3>
+<ul>
+    <c:forEach var="issue" items="${user.assignedIssues}">
+        <li>
+            <c:out value="${issue.title}" escapeXml="true"/>
+        </li>
+    </c:forEach>
+</ul>
 </body>
 </html>
