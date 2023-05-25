@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 import org.junit.Assert;
@@ -12,14 +11,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class UserDaoImplTest {
+@Transactional
+public class UserDaoJpaTest {
 
     private static final long ID = 1;
     private static final String EMAIL = "pedro@mcpedro.com";
@@ -29,7 +32,10 @@ public class UserDaoImplTest {
     private DataSource ds;
 
     @Autowired
-    private UserDao userDao;
+    private UserDaoJpa userDao;
+
+    @PersistenceContext
+    private EntityManager em;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -78,7 +84,10 @@ public class UserDaoImplTest {
         Assert.assertNotNull(user);
         Assert.assertEquals(EMAIL, user.getEmail());
         Assert.assertEquals(PASSWORD, user.getPassword());
-        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+        // El UserDaoJpa y JdbcTestUtils usan diferentes conexiones a la db, y como el test es @Transactional
+        // entonces no se pueden ver estas diferencias.
+        // Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
+        Assert.assertNotNull(em.find(User.class, user.getUserId()));
     }
 
 }
