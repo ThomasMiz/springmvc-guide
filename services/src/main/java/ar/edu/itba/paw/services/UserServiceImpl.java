@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 // Podemos usar @Transaction para transformar un método en transacción, o podemos ponerle @Transaction a la clase para
@@ -50,6 +51,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userDao.findByEmail(email);
+    }
+
+    @Override
+    public List<User> getAll(int pageNumber, int pageSize) {
+        return userDao.getAll(pageNumber, pageSize);
     }
 
     @Transactional

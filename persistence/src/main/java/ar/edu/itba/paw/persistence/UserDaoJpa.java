@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDaoJpa implements UserDao {
@@ -37,6 +40,44 @@ public class UserDaoJpa implements UserDao {
         query.setParameter("email", email);
 
         return query.getResultList().stream().findFirst();
+    }
+
+    @Override
+    public List<User> getAll(int pageNumber, int pageSize) {
+        // final TypedQuery<User> query = em.createQuery("FROM User", User.class);
+        // query.setMaxResults(pageSize);
+        // query.setFirstResult((pageNumber - 1) * pageSize);
+        // return query.getResultList();
+        // HACER ESTO ASÍ ES PELIGROSO! El tema es que setMaxResults y setFirstResult hablan en términos de ROWS, pero
+        // el query habla en términos de entidades y el mapeno no necesariamente es 1 a 1.
+        // Si yo estoy trayendo mis users con listas de issues, puede ser que haga un OUTER JOIN para traer ambos en
+        // una sola query, en ese caso si usamos setMaxResults y setFirstResults pueden cortar el resultset en el medio
+        // de una lista!
+        // Pero si yo solo estoy haciendo "SELECT * FROM users", el mapeo filas-entidades seguro es 1 a 1 y esto no
+        // va a tener ningún problema.
+
+        // Para evitar este error, Hibernate hizo que cuando la query subyacente precisa hacer un JOIN, entonces en vez
+        // de usar LIMIT ? OFFSET ?, va a CARGAR LA QUERY ENTERA A MEMORIA y después aplicar paginación.
+        // SI HACES ESTO ESTÁ MAL. ES TERRIBLEMENTE INEFICIENTE.
+
+        // Y si pensas "Ah, pero no pasa nada, mi 'FROM User' no hace joins, no tengo de qué preocuparme!" entonces
+        // te expones al riesgo de que si en un futuro si empieza a hacer JOINs, sin warning ni nada caes en el
+        // problema de eficiencia. No podes confiar en que no hacen JOINs!
+
+        // Para paginar entonces vamos a usar el modelo de "1+1 queries". Hacemos dos queries; uno de paginación y otro
+        // de traer los datos. La query de paginación es nativeQuery, es SQL, entonces me aseguro 100% que no hay JOINs.
+        //
+        Query nativeQuery = em.createNativeQuery("SELECT user_id FROM users");
+        nativeQuery.setMaxResults(pageSize);
+        nativeQuery.setFirstResult((pageNumber - 1) * pageSize);
+
+        final List<Long> idList = (List<Long>) nativeQuery.getResultList()
+                .stream().map(n -> (Long)((Number)n).longValue()).collect(Collectors.toList());
+
+        final TypedQuery<User> query = em.createQuery("FROM User WHERE userId IN :ids", User.class);
+        query.setParameter("ids", idList);
+
+        return query.getResultList();
     }
 
     @Override
