@@ -23,7 +23,7 @@ public class UserDaoJpa implements UserDao {
     public User create(final String email, final String password) {
         final User user = new User(email, password);
         em.persist(user);
-        return user; // OJO: Este user tiene el id en null!
+        return user;
     }
 
     @Override
