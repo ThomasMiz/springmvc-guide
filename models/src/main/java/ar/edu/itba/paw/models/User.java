@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +29,18 @@ public class User {
 
     @Column(length = 60, nullable = false)
     private String password;
+
+    // Igual que en Issue agregué los reportedBy y assignedTo, acá puedo (si quiero) agregar el otro lado
+    // de la relación. Solo que en vez de @ManyToOne, acá va a ser un @OneToMany.
+    // En vez de opción de "optional" acá me da "orphanRemoval", que es "qué queres que haga si elimino un
+    // elemento de la lista?" Lo borro de la tabla? O lo dejo vivo?
+    // Otro parámetro importante es el mappedBy. Hibernate no tiene forma de saber que esto y lo que pusimos
+    // en Issue son dos lados de la misma relación! Entonces lo especificamos con el mappedBy.
+    @OneToMany(mappedBy = "reportedBy", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Issue> reportedIssues;
+
+    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Issue> assignedIssues;
 
     // Para crear una instancia, Hibernate en vez de usar un constructor con los datos nos obliga a poner un
     // constructor default, y luego usa reflection para settear los valores de los campos
@@ -62,5 +75,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Issue> getReportedIssues() {
+        return reportedIssues;
+    }
+
+    public List<Issue> getAssignedIssues() {
+        return assignedIssues;
     }
 }

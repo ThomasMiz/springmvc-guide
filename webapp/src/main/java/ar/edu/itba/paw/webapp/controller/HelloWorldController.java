@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.IssueService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Priority;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -41,9 +43,12 @@ public class HelloWorldController {
 
     private final UserService us;
 
+    private final IssueService is;
+
     @Autowired
-    public HelloWorldController(final UserService us) {
+    public HelloWorldController(final UserService us, final IssueService is) {
         this.us = us;
+        this.is = is;
     }
 
     // Spring permite hacer inyección de otras formas, no solo pasando instancia al constructor.
@@ -140,6 +145,14 @@ public class HelloWorldController {
         final User user = us.findById(userId).orElseThrow(UserNotFoundException::new);
         mav.addObject("user", user);
         return mav;
+    }
+
+    @RequestMapping("/report")
+    public ModelAndView report(@RequestParam("title") String title) {
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        is.reportIssue(userDetails.getUsername(), title, "Lorem Ipsum DOLOR", Priority.MEDIUM);
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

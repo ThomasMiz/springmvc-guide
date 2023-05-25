@@ -102,7 +102,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // TODOS LOS DATOS. Si pongo "update", que hace lo mejor que pueda para ALTER-ar las tablas a los modelos.
         // Si agregaste un CHECK (cosa > 0) probablemente lo ignore, pero si agregaste una columna nueva la agrega.
         // Si no queres que haga nada, lo pones en "none".
-        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         // NOTA: Si decidis usar esto, deberias sacar los @Bean de dataSourceInitializer y databasePopulator, ya que
         // Hibernate se estará encargando de crear las tablas.
 
