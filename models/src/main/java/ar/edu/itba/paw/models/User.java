@@ -3,6 +3,32 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 import java.util.List;
 
+// Hay tres formas de mappear herencia del modelo objetos al modelo relacional. Mezclar todas las entidades
+// en una sola tabla (SINGLE_TABLE), con una tabla por entidad concreta (la tabla de Patient tendría los
+// mismos campos que la tabla de user, más algunos otros) (TABLE_PER_CLASS), y pasar los campos de las
+// subclases a una tabla aparte por subclase (JOINED).
+// @Inheritance(strategy = InheritanceType.JOINED)
+
+// Si preferimos usar SINGLE_TABLE. Para que funcione esto, tenemos que agregar una "discriminator column",
+// que Hibernate usa para saber, para cada fila, que tipo de subclase es.
+// A cada subclase, le damos un @DiscriminatorValue especificando su valor para la columna discrimininador.
+// En vez de usar una columna con valores predefinidos, Hibernate nos deja usar una formula SQL para saber
+// como diferenciar: @DiscriminatorFormula("CASE WHEN insurance IS NULL THEN 'DOCTOR' ELSE 'PATIENT' END")
+// @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+// @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+
+// Si usamos TABLE_PER_CLASS, no necesitamos los discriminadores, y las queries Hibernate las resuelve
+// haciendo JOINs de todas las tablas creadas. NOTAR QUE ASÍ NOS CREA LA TABLA inheritance_users!! No
+// hicimos User abstract entonces la crea. Si la hacemos abstract, la deja de crear.
+// @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+// @Entity
+// @Table(name = "inheritance_users")
+// public abstract class User {
+
+// Dato: Poner estas tres annotations es lo mismo que usar @MappedSuperclass (User puede ser o no abstract)
+// Nota: Los TypedQuery-s, ahora cuando hacemos em.createQuery(..., User.class) nos puede traer instancias de Doctor
+// y/o Patient.
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Entity
 @Table(name = "users")
 public class User {
