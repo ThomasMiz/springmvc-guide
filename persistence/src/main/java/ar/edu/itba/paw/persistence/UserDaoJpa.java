@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,6 +74,10 @@ public class UserDaoJpa implements UserDao {
 
         final List<Long> idList = (List<Long>) nativeQuery.getResultList()
                 .stream().map(n -> (Long)((Number)n).longValue()).collect(Collectors.toList());
+
+        // Sino el siguiente query falla, no te deja hacer IN de una lista vacía.
+        if (idList.isEmpty())
+            return Collections.emptyList();
 
         final TypedQuery<User> query = em.createQuery("FROM User WHERE userId IN :ids", User.class);
         query.setParameter("ids", idList);
