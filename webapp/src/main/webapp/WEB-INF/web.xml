@@ -78,13 +78,16 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>ar.edu.itba.paw.webapp.controller</param-value>
+            <param-value>
+                ar.edu.itba.paw.webapp.controller,
+                ar.edu.itba.paw.webapp.mapper
+            </param-value>
         </init-param>
         <!-- Pido que cuando falla alguna validación que lo ponga en la respuesta http -->
-        <init-param>
+        <!--<init-param> Lo reemplazamos por exception mappers
             <param-name>jersey.config.beanValidation.enableOutputValidationErrorEntity.server</param-name>
             <param-value>true</param-value>
-        </init-param>
+        </init-param> -->
         <!-- Especifica qué hacer cuando no encuentra un handler para un endpoint -->
         <init-param>
             <param-name>jersey.config.servlet.filter.forwardOn404</param-name>

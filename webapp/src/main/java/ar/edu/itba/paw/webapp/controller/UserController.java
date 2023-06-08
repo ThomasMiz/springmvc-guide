@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.dto.UserDto;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -81,12 +82,10 @@ public class UserController {
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") final long id) {
-        final Optional<User> maybeUser = us.findById(id);
-        if (!maybeUser.isPresent())
-            return Response.status(Response.Status.NOT_FOUND).build();
+        final User user = us.findById(id).orElseThrow(UserNotFoundException::new);
 
         // OJO: Acá también usamos el UserDto y no el User en la respuesta!!
-        return Response.ok(UserDto.fromUser(uriInfo, maybeUser.get())).build();
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
     }
 
     @POST
