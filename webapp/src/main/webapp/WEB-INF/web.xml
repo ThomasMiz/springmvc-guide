@@ -29,21 +29,6 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <servlet>
-        <servlet-name>dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextClass</param-name>
-            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
     <!--
         Tenemos dos formas de mapear los archivos css. Una es la que está habilitada, que es agregando resource handlers
         en WebConfig.addResourceHandlers(), y la otra es con un servlet mapping como se muestra en este comentario:
@@ -68,12 +53,47 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     </filter-mapping>
 
     <!-- Leer los comentarios en IssueServiceImpl.java, dentro de reportIssue(), para entender este filter -->
-    <filter>
+    <!-- <filter>
         <filter-name>openEntityManagerInView</filter-name>
         <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>openEntityManagerInView</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping> -->
+    <!--
+        Cómo no estamos renderizando views, este filter pueden no necesitarlo más. Si necesitan cargar cosas lazy a
+        medida que se construyen sus DTOs, lo pueden descomentar.
+    -->
+
+    <!--
+        Jersey se puede mappear como un servlet o como un filter. La ventaja de usar un filter es que los endpoints con
+        los que no sabe qué hacer los puede dejar pasar, entonces cosas como static content las termina manejando el
+        default servlet. Las dos son viables, pero requieren configuraciones distintas. Acá vamos a usar filter.
+        IMPORTANTÍSIMO: Los filters se ejecutan en orden, por ende el filter de Jersey TIENE QUE ESTAR DESPUÉS DEL DE
+        SPRING SECURITY!!
+    -->
+    <filter>
+        <filter-name>jersey</filter-name>
+        <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>ar.edu.itba.paw.webapp.controller</param-value>
+        </init-param>
+        <!-- Pido que cuando falla alguna validación que lo ponga en la respuesta http -->
+        <init-param>
+            <param-name>jersey.config.beanValidation.enableOutputValidationErrorEntity.server</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!-- Especifica qué hacer cuando no encuentra un handler para un endpoint -->
+        <init-param>
+            <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>jersey</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>

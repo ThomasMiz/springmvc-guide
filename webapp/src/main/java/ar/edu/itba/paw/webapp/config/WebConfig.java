@@ -113,14 +113,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return factoryBean;
     }
 
-    // Con esto ubicamos los archivos en WEB-INF/css/* para mapearlos a /css/*, haciéndolos accesibles a clientes
-    // Otra alternativa es usando un <servlet-mapping>, explicado en un comentario en el archivo WEB-INF/web.xml.
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-    }
-
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
         final DataSourceInitializer dsi = new DataSourceInitializer();

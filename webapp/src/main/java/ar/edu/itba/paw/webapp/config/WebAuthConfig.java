@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,8 +56,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         // DEBEMOS CONFIGURAR UN FILTRO EN webapp/WEB-INF/web.xml PARA QUE ESTO FUNCIONE.
 
         http.sessionManagement()
-                // Si la sesión del usuario es inválida (por ej, porque expiró), redirigilo al /login:
-                .invalidSessionUrl("/login")
+                // No usamos más el .invalidSessionUrl(). No vamos a usar más endpoints de /login o /register, el login
+                // se puede hacer desde cualquier endpoint, y el register es un POST a /users. Es un API REST!
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 // Ahora voy a especificar como se autorizan los requests. Notar que se validan en orden especificado:
                 .and().authorizeRequests()
@@ -71,45 +73,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // todos los EDITORs puedan entrar a /posts/review, pero también el usuario que creó el post. Para esto
                 // existe un Expression Language en spring security que te permite definir cosas más precisas:
                 // .antMatchers("/posts/review").access("@AccessHelper.canEdit") // No los vamos a ver en clase igual
+
                 // Todos los demas accesos a cualquier cosa en "/**" piden solo autentiación (ESTO SIEMPRE AL FINAL!)
-                .antMatchers("/**").authenticated()
+                .antMatchers("/**").permitAll() // POR SIMPLICIDAD POR AHORA LO DEJAMOS EN PERMITR ALL
 
-                // Ahora voy a especificar la lógica del login para que maneje el formulario por nosotros:
-                .and().formLogin()
-                // Le digo que el endpoint donde se hace login es "/login":
-                .loginPage("/login")
-                // Le especifico como se llaman los parametros de username y password en el form:
-                .usernameParameter("email").passwordParameter("password")
-                // En el caso de login exitoso, vamos a redirigir al url "/":
-                .defaultSuccessUrl("/", false)
-                // El false es del parámetro "alwaysUse", que dice si tiene que forzar ese redirect o si puede ir a
-                // otro lado. Por ej, intentaste acceder a /post/review pero te mando a login y despues volvemos
 
-                // Podemos configurar para que se acuerde las sesiones:
-                .and().rememberMe()
-                // Especificamos que lo haga en base a un parametro "rememberme" en el formulario de login:
-                .rememberMeParameter("rememberme")
-                // Especificamos el UserDetailsService a utilizar. Usamos un PawUserDetailsService inyectado arriba:
-                .userDetailsService(userDetailsService)
-                // Podemos especificar el nombre de la cookie de remember me:
-                // .rememberMeCookieName("remember-me-cookie")
-                // Spring-security usa cookies para trackear sesiones de usuario. Esas cookies son valores
-                // criptográficos que se generan con una función de hashing que toma un SALT. Este salt, por default,
-                // se genera con un random criptográfico cuando inicia el servidor, pero eso significa que si yo
-                // reinicio el servidor, este salt cambia y todas las sesiones que di antes no las puedo validar más!
-                // La solución es especificar este salt manualmente a una constante, pero esto debe ser un valor largo
-                // y criptográficamente seguro, no un texto cualquiera! Una opción sería pedirle a OpenSSL que genere
-                // este string, guardarlo en un archivo de recurso, y cargarlo en runtime.
-                .key("NO HAGAS ESTO") // <-- PROBLEMA DE SEGURIDAD, USAR
-                // Especificamos la cantidad de tiempo en segundos que dura el remember me:
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-
-                // Ahora vamos a configurar el logout:
-                .and().logout()
-                // La URL para hacer logout es "/logout":
-                .logoutUrl("/logout")
-                // Y cuando el logout se hace correctamente redirigimos a "/login":
-                .logoutSuccessUrl("/login")
 
                 // Ahora vamos a configurar el manejo de exceptions:
                 .and().exceptionHandling()
