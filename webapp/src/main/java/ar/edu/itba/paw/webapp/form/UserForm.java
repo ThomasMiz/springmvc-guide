@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 
@@ -22,6 +23,7 @@ import javax.validation.constraints.Size;
 
 public class UserForm {
 
+    @NotBlank
     @Size(min = 6, max = 128) // Especifico rango del length del string
     // @Pattern(regexp = "^[a-zA-Z0-9]+$") // Debe validar con tal regex, lo dejo como ejemplo pero mejor usar email
     @Email
@@ -30,9 +32,11 @@ public class UserForm {
     // Si fueras a querer un mensaje propio en una anotación, podes usar el parámetro message que toman. Por ejemplo:
     // @Email(message = "{badEmail}"). Esto es particularmente util si tenes varias del mismo tipo en un solo campo.
 
+    @NotBlank
     @Size(min = 8)
     private String password;
 
+    @NotBlank
     @Size(min = 8)
     private String repeatPassword;
 
